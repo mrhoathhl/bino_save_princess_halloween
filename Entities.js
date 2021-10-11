@@ -5,6 +5,8 @@ var damagePlayer = 500;
 var playerLose = false;
 let keyPlayer;
 let keyDemon;
+window.isPlaygame = false;
+var wingame = false;
 class Entity extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, key) {
         super(scene, x, y, key);
@@ -33,10 +35,15 @@ class Player extends Entity {
         var player = this;
         if (!this.getData("isDead") && isControllable && this.getData("isDead") !== undefined) {
             if (this.scene.sys.game.device.os.desktop) {
-                player.body.setVelocityX(250);
-                player.anims.play(`${keyPlayer}TurnMotion`, true);
-                player.flipX = false;
+                if (isPlaygame) {
+                    player.body.setVelocityX(250);
+                    player.anims.play(`${keyPlayer}TurnMotion`, true);
+                    player.flipX = false;
+                }
                 if (this.scene.cursors.space.isDown) {
+                    // player.body.setVelocityX(250);
+                    // player.anims.play(`${keyPlayer}TurnMotion`, true);
+                    // player.flipX = false;
                     if (player.getData("timerShootTick") < player.getData("timerShootDelay")) {
                         player.setData("timerShootTick", player.getData("timerShootTick") + 1);
                     } else {
@@ -63,9 +70,11 @@ class Player extends Entity {
                     player.anims.play(`${keyPlayer}JumpMotion`);
                 }
             } else {
-                player.body.setVelocityX(250);
-                player.anims.play(`${keyPlayer}TurnMotion`, true);
-                player.flipX = false;
+                if (isPlaygame) {
+                    player.body.setVelocityX(250);
+                    player.anims.play(`${keyPlayer}TurnMotion`, true);
+                    player.flipX = false;
+                }
                 if (isFire) {
                     if (player.getData("timerShootTick") < player.getData("timerShootDelay")) {
                         player.setData("timerShootTick", player.getData("timerShootTick") + 1);
@@ -116,8 +125,6 @@ class Player extends Entity {
         playerLose = true;
         this.scene.playSound("loseSound");
         Sounds["bgSound"].pause();
-        this.scene.turnRight.setVisible(false);
-        this.scene.turnLeft.setVisible(false);
         this.scene.jump.setVisible(false);
         this.scene.fire.setVisible(false);
         this.scene.player.body.setImmovable(true);
@@ -150,10 +157,11 @@ class Player extends Entity {
     }
 
     onSuccessfuly(gameWin) {
+        wingame = true;
         this.scene.playSound("winSound");
         Sounds["bgSound"].pause();
-        this.scene.turnRight.setVisible(false);
-        this.scene.turnLeft.setVisible(false);
+        // this.scene.turnRight.setVisible(false);
+        // this.scene.turnLeft.setVisible(false);
         this.scene.jump.setVisible(false);
         this.scene.fire.setVisible(false);
         this.scene.add.tween({
@@ -182,13 +190,46 @@ class Demon extends Entity {
     }
     update() {
         var demon = this;
-        demon.body.setVelocityX(250);
-        demon.anims.play(`${keyDemon}Motion`, true);
-        demon.flipX = false;
-        if(playerLose){
+        if (isPlaygame) {
+            demon.body.setVelocityX(250);
+            demon.anims.play(`${keyDemon}Motion`, true);
+            demon.flipX = false;
+        }
+        if (playerLose) {
             demon.anims.play(`${keyDemon}IdleMotion`, true);
             demon.body.setVelocityX(0);
             demon.body.setVelocityY(0);
+        }
+        if (wingame) {
+            demon.body.setImmovable(true);
+            demon.body.setVelocityY(-500);
+            demon.body.setVelocityX(0);
+            this.scene.add.tween({
+                targets: demon,
+                ease: "Sine.easeInOut",
+                delay: 500,
+                duration: 1000,
+                scale: 1,
+                alpha: {
+                    getStart: () => 1,
+                    getEnd: () => 0,
+                },
+                repeat: 0,
+                yoyo: false,
+            });
+            wingame = false
+            // this.scene.add.tween({
+            //     targets: this.scene.demon,
+            //     ease: "Sine.easeInOut",
+            //     duration: 1000,
+            //     alpha: {
+            //         getStart: () => 1,
+            //         getEnd: () => 0,
+            //     },
+            //     repeat: 0,
+            //     yoyo: false,
+            // });
+            // wingame = false
         }
     }
 }
