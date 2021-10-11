@@ -1,5 +1,6 @@
 let playerImageKey = "sprMovementPlayer1";
 let checkEnd;
+let collierDemonWithGround;
 class Scene1PlayGame extends Phaser.Scene {
     constructor() {
         super({ key: "Scene1PlayGame" });
@@ -48,7 +49,7 @@ class Scene1PlayGame extends Phaser.Scene {
             console.log(demon);
             this.demon = new Demon(this, demon.x, demon.y, "sprMovementDemon").setDepth(3).setScale(1);
             this.physics.add.collider(this.demon, this.player, this.impactDemon, null, this);
-            this.physics.add.collider(this.demon, this.groundLayer);
+            collierDemonWithGround = this.physics.add.collider(this.demon, this.groundLayer);
         });
 
         this.map.getObjectLayer("Coins").objects.forEach((coin) => {
@@ -281,7 +282,7 @@ class Scene1PlayGame extends Phaser.Scene {
             });
         });
 
-        this.physics.add.collider(this.player, this.finishPoint, this.impactFinishPoint, null, this);
+        this.physics.add.collider(this.player,this.finishPoint, this.impactFinishPoint, null, this);
         this.physics.add.collider(this.bossAttackGroup, this.groundLayer, this.bulletImpactGround, null, this);
         this.physics.add.collider(this.attackGroup, this.groundLayer, this.bulletImpactGround, null, this);
 
@@ -633,6 +634,7 @@ class Scene1PlayGame extends Phaser.Scene {
             onComplete: () => {
                 player.onSuccessfuly(this.gameWin);
                 player.onSuccessfuly(this.logo);
+                this.physics.world.removeCollider(collierDemonWithGround);
                 endGame = true;
             },
         });

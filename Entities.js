@@ -6,7 +6,7 @@ var playerLose = false;
 let keyPlayer;
 let keyDemon;
 window.isPlaygame = false;
-var wingame = false;
+let wingame = false;
 class Entity extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, key) {
         super(scene, x, y, key);
@@ -154,14 +154,13 @@ class Player extends Entity {
             repeat: 0,
             yoyo: false,
         });
+        window.isPlaygame = false;
     }
 
     onSuccessfuly(gameWin) {
         wingame = true;
         this.scene.playSound("winSound");
         Sounds["bgSound"].pause();
-        // this.scene.turnRight.setVisible(false);
-        // this.scene.turnLeft.setVisible(false);
         this.scene.jump.setVisible(false);
         this.scene.fire.setVisible(false);
         this.scene.add.tween({
@@ -177,6 +176,7 @@ class Player extends Entity {
             repeat: 0,
             yoyo: false,
         });
+        window.isPlaygame = false;
     }
 }
 class Demon extends Entity {
@@ -190,7 +190,8 @@ class Demon extends Entity {
     }
     update() {
         var demon = this;
-        if (isPlaygame) {
+        if (window.isPlaygame) {
+            console.log("play game false");
             demon.body.setVelocityX(250);
             demon.anims.play(`${keyDemon}Motion`, true);
             demon.flipX = false;
@@ -199,17 +200,18 @@ class Demon extends Entity {
             demon.anims.play(`${keyDemon}IdleMotion`, true);
             demon.body.setVelocityX(0);
             demon.body.setVelocityY(0);
+            console.log(wingame);
         }
         if (wingame) {
+            console.log(demon);
+            wingame = false;
+            demon.body.velocity.x = 0;
+            demon.body.velocity.y = -300;
             demon.body.setImmovable(true);
-            demon.body.setVelocityY(-500);
-            demon.body.setVelocityX(0);
             this.scene.add.tween({
                 targets: demon,
                 ease: "Sine.easeInOut",
-                delay: 500,
                 duration: 1000,
-                scale: 1,
                 alpha: {
                     getStart: () => 1,
                     getEnd: () => 0,
@@ -217,19 +219,6 @@ class Demon extends Entity {
                 repeat: 0,
                 yoyo: false,
             });
-            wingame = false
-            // this.scene.add.tween({
-            //     targets: this.scene.demon,
-            //     ease: "Sine.easeInOut",
-            //     duration: 1000,
-            //     alpha: {
-            //         getStart: () => 1,
-            //         getEnd: () => 0,
-            //     },
-            //     repeat: 0,
-            //     yoyo: false,
-            // });
-            // wingame = false
         }
     }
 }
