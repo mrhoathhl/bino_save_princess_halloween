@@ -6,7 +6,7 @@ var playerLose = false;
 let keyPlayer;
 let keyDemon;
 window.isPlaygame = false;
-let wingame = false;
+window.wingame = false;
 class Entity extends Phaser.GameObjects.Sprite {
     constructor(scene, x, y, key) {
         super(scene, x, y, key);
@@ -35,7 +35,7 @@ class Player extends Entity {
         var player = this;
         if (!this.getData("isDead") && isControllable && this.getData("isDead") !== undefined) {
             if (this.scene.sys.game.device.os.desktop) {
-                if (isPlaygame) {
+                if (window.isPlaygame) {
                     player.body.setVelocityX(250);
                     player.anims.play(`${keyPlayer}TurnMotion`, true);
                     player.flipX = false;
@@ -70,7 +70,7 @@ class Player extends Entity {
                     player.anims.play(`${keyPlayer}JumpMotion`);
                 }
             } else {
-                if (isPlaygame) {
+                if (window.isPlaygame) {
                     player.body.setVelocityX(250);
                     player.anims.play(`${keyPlayer}TurnMotion`, true);
                     player.flipX = false;
@@ -158,7 +158,6 @@ class Player extends Entity {
     }
 
     onSuccessfuly(gameWin) {
-        wingame = true;
         this.scene.playSound("winSound");
         Sounds["bgSound"].pause();
         this.scene.jump.setVisible(false);
@@ -191,7 +190,6 @@ class Demon extends Entity {
     update() {
         var demon = this;
         if (window.isPlaygame) {
-            console.log("play game false");
             demon.body.setVelocityX(250);
             demon.anims.play(`${keyDemon}Motion`, true);
             demon.flipX = false;
@@ -200,13 +198,11 @@ class Demon extends Entity {
             demon.anims.play(`${keyDemon}IdleMotion`, true);
             demon.body.setVelocityX(0);
             demon.body.setVelocityY(0);
-            console.log(wingame);
         }
-        if (wingame) {
-            console.log(demon);
-            wingame = false;
+        if (window.wingame) {
+            window.wingame = false;
             demon.body.velocity.x = 0;
-            demon.body.velocity.y = -300;
+            demon.body.velocity.y = -500;
             demon.body.setImmovable(true);
             this.scene.add.tween({
                 targets: demon,

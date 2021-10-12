@@ -235,8 +235,8 @@ class Scene1PlayGame extends Phaser.Scene {
             this.princess.play("sprPrincessCryMotion");
             this.physics.add.collider(this.princess, this.groundLayer);
             this.physics.add.collider(this.case, this.groundLayer);
-            this.physics.add.collider(this.case, this.player);
-            this.physics.add.overlap(this.player, this.princess, this.impactPrincess, null, this);
+            // this.physics.add.collider(this.case, this.player);
+            this.physics.add.collider(this.player, this.princess, this.impactPrincess, null, this);
         });
 
         this.map.getObjectLayer("Springs").objects.forEach((springsData) => {
@@ -282,7 +282,7 @@ class Scene1PlayGame extends Phaser.Scene {
             });
         });
 
-        this.physics.add.collider(this.player,this.finishPoint, this.impactFinishPoint, null, this);
+        this.physics.add.collider(this.player, this.finishPoint, this.impactFinishPoint, null, this);
         this.physics.add.collider(this.bossAttackGroup, this.groundLayer, this.bulletImpactGround, null, this);
         this.physics.add.collider(this.attackGroup, this.groundLayer, this.bulletImpactGround, null, this);
 
@@ -365,8 +365,8 @@ class Scene1PlayGame extends Phaser.Scene {
         // this.cameras.main.scrollX = this.princess.x - 300;
         // this.cameras.main.scrollY = this.princess.y;
         this.cameras.main.startFollow(this.player);
-        this.fire.setVisible(true);
-        this.jump.setVisible(true);
+        // this.fire.setVisible(true);
+        // this.jump.setVisible(true);
         this.downloadNow.setVisible(true);
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.pan(0, this.groundLayer.height, 1000, "Sine.easeInOut");
@@ -616,9 +616,40 @@ class Scene1PlayGame extends Phaser.Scene {
     }
 
     impactFinishPoint(player, finishPoint) {
+        console.log("finish");
         player.anims.play(`${playerImageKey}TurnMotion`, true);
         this.finishPoint.setCollisionByExclusion([0]);
-        player.body.velocity.x = 100;
+        player.body.velocity.x = 200;
+        this.add.tween({
+            targets: this.finishPoint,
+            ease: "Sine.easeInOut",
+            duration: 200,
+            delay: 0,
+            alpha: {
+                getStart: () => 1,
+                getEnd: () => 0,
+            },
+
+            repeat: 0,
+            yoyo: false,
+            loop: 3
+        });
+        window.wingame = true;
+        window.isPlaygame = false;
+        this.physics.world.removeCollider(collierDemonWithGround);
+
+    }
+
+    impactPrincess(player, princess) {
+        this.time.addEvent({
+            callback: function () {
+                princess.body.velocity.x = 100;
+                princess.anims.play("sprPrincessMoveMotion", true);
+            },
+            callbackScope: this,
+            repeat: 0,
+        });
+
         this.add.tween({
             targets: [player, this.princess],
             ease: "Sine.easeInOut",
@@ -634,35 +665,10 @@ class Scene1PlayGame extends Phaser.Scene {
             onComplete: () => {
                 player.onSuccessfuly(this.gameWin);
                 player.onSuccessfuly(this.logo);
-                this.physics.world.removeCollider(collierDemonWithGround);
+                player.body.velocity.x = 0;
                 endGame = true;
             },
         });
-    }
-
-    impactPrincess(player, princess) {
-        if (isBossDead) {
-            isControllable = false;
-            player.body.velocity.x = 100;
-            this.time.addEvent({
-                delay: 200,
-                callback: function () {
-                    player.body.velocity.x = 100;
-                    player.anims.play(`${playerImageKey}TurnMotion`, true);
-                },
-                callbackScope: this,
-                repeat: 0,
-            });
-            this.time.addEvent({
-                delay: 900,
-                callback: function () {
-                    princess.body.velocity.x = 100;
-                    princess.anims.play("sprPrincessMoveMotion", true);
-                },
-                callbackScope: this,
-                repeat: 0,
-            });
-        }
     }
 
     standOnTrap(player, trap) {

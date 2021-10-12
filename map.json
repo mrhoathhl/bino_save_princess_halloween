@@ -3,8 +3,7 @@
     {
      "export":
         {
-         "format":"tmx",
-         "target":"."
+         "format":"tmx"
         }
     },
  "height":34,
@@ -827,17 +826,6 @@
                  "width":32,
                  "x":3489,
                  "y":941
-                }, 
-                {
-                 "height":32,
-                 "id":432,
-                 "name":"",
-                 "rotation":0,
-                 "type":"",
-                 "visible":true,
-                 "width":32,
-                 "x":3807.33333333333,
-                 "y":949
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -849,7 +837,7 @@
  "nextobjectid":464,
  "orientation":"orthogonal",
  "renderorder":"right-down",
- "tiledversion":"1.4.2",
+ "tiledversion":"1.7.0",
  "tileheight":32,
  "tilesets":[
         {
@@ -867,12 +855,12 @@
          "margin":1,
          "name":"tile_mario",
          "spacing":2,
-         "tilecount":121,
+         "tilecount":0,
          "tileheight":32,
          "tilewidth":32
         }],
  "tilewidth":32,
  "type":"map",
- "version":1.4,
+ "version":"1.6",
  "width":156
 }
