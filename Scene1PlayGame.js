@@ -286,7 +286,7 @@ class Scene1PlayGame extends Phaser.Scene {
         this.physics.add.collider(this.bossAttackGroup, this.groundLayer, this.bulletImpactGround, null, this);
         this.physics.add.collider(this.attackGroup, this.groundLayer, this.bulletImpactGround, null, this);
 
-        this.tapToPlay = new AssetStatic(this, this.game.scale.width / 2, this.game.scale.height / 2, "sprTapToPlay").setScrollFactor(0).setDepth(3).setVisible(false);
+        this.tapToPlay = new AssetStatic(this, this.game.scale.width / 2, this.game.scale.height / 2, "sprTapToPlay").setScrollFactor(0).setDepth(3).setVisible(false).setScale(0.6);
         this.tweens.add({
             targets: this.tapToPlay,
             duration: 500,
@@ -302,7 +302,7 @@ class Scene1PlayGame extends Phaser.Scene {
         this.gameOver = new AssetStatic(this, this.game.scale.width / 2, this.game.scale.height / 2, "sprGameOver").setAlpha(0).setScale(0.1).setDepth(3).setInteractive().setScrollFactor(0);
         this.logo = new AssetStatic(this, this.game.scale.width / 2, this.game.scale.height / 2 - 110, "sprLogoGame").setAlpha(0).setScale(0.1).setDepth(4).setInteractive().setScrollFactor(0);
         this.gameWin = new AssetStatic(this, this.game.scale.width / 2, this.game.scale.height / 2, "sprGameWin").setAlpha(0).setScale(0.1).setDepth(3).setInteractive().setScrollFactor(0);
-        this.downloadNow = new AssetMotion(this, this.game.scale.width / 2, 40, "sprDownloadNow").setDepth(3).setInteractive().setVisible(false).setScrollFactor(0);
+        this.downloadNow = new AssetMotion(this, this.game.scale.width / 2, 40, "sprDownloadNow").setDepth(3).setInteractive().setVisible(false).setScrollFactor(0).setScale(1.1);
         disableBgSound = new AssetStatic(this, 40, 40, "sprMute").setFrame(0).setDepth(3).setInteractive().setScrollFactor(0).setVisible(false);
         disableBgSound.on("pointerdown", function (event) {
             if (Sounds["bgSound"].playing()) {
@@ -341,44 +341,31 @@ class Scene1PlayGame extends Phaser.Scene {
             .setScale(1)
             .setVisible(false)
             .setInteractive({ draggable: true });
-        this.jump
-            .on("pointerdown", function () {
-                isJump = true;
-            })
-            .on("pointerout", function () {
-                isJump = false;
-            });
-
-        this.fire
-            .on("pointerdown", function () {
-                isFire = true;
-            })
-            .on("pointerout", function () {
-                isFire = false;
-            });
 
         this.physics.world.bounds.width = this.groundLayer.width;
         this.physics.world.bounds.height = this.groundLayer.height;
 
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels - 40);
         this.tapToPlay.setVisible(true);
-        // this.cameras.main.scrollX = this.princess.x - 300;
-        // this.cameras.main.scrollY = this.princess.y;
         this.cameras.main.startFollow(this.player);
-        // this.fire.setVisible(true);
-        // this.jump.setVisible(true);
         this.downloadNow.setVisible(true);
         this.cameras.main.setBounds(0, 0, this.map.widthInPixels, this.map.heightInPixels);
         this.cameras.main.pan(0, this.groundLayer.height, 1000, "Sine.easeInOut");
         this.cameras.main.setFollowOffset(0, -300);
-        Sounds["bgSound"].play();
+
         this.input.on("pointerdown", function () {
             if (!Sounds["bgSound"].playing() && !isMuted) {
                 Sounds["bgSound"].play();
                 this.scene.tapToPlay.setVisible(false);
-                isPlaygame = true;
+                window.isPlaygame = true;
             }
+            isJump = true;
+            console.log(isJump);
         })
+        .on("pointerup", function () {
+            isJump = false;
+            console.log(isJump);
+        });
         this.cameras.main.roundPixels = true;
         this.cameras.main.pixelArt = true;
         this.cursors = this.input.keyboard.createCursorKeys();
